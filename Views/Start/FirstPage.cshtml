@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<style>
+    .btn-img-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-custom {
+        border-color: #000000;
+        /* Cor da borda padrão */
+        box-shadow: inset 0 0 0 0 transparent;
+    }
+
+    .btn-custom:hover {
+        box-shadow: inset 0 0 10px 3px #000000;
+    }
+</style>
+
+<form method="get" enctype="multipart/form-data">
+    <div style="display: flex; justify-content: space-between; padding-top: 20px;">
+
+        <div>
+            <label class="form-label">Gerar Par de Chaves</label>
+            <div>
+                <button class="btn btn-custom" asp-controller="Encrypt" asp-action="GenerateKeyPair">
+                    <span class="btn-img-container">
+                        <img src="~/images/keyPair1-Transparent.png" alt="Gerar par de chaves" width="225px"
+                            height="225px">
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <label class="form-label">Criptografar Imagem</label>
+            <div>
+                <button type="button" class="btn btn-custom" asp-controller="Encrypt" asp-action="EncryptImage">
+                    <span class="btn-img-container">
+                        <img src="~/images/keyPair1-Transparent.png" alt="Criptografar Imagem" width="225px"
+                            height="225px">
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <label class="form-label">Descriptografar Imagem</label>
+            <div>
+                <button type="button" class="btn btn-custom" asp-controller="Encrypt" asp-action="DecryptImage">
+                    <span class="btn-img-container">
+                        <img src="~/images/keyPair1-Transparent.png" alt="Descriptografar Imagem" width="225px"
+                            height="225px">
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</form>

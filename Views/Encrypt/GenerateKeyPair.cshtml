@@ -1,0 +1,75 @@
+@model KeyPairModel
+@{
+    ViewData["Title"] = "Gerar Par de Chaves";
+}
+
+
+<style>
+    .containerDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .key-block {
+        width: 80%;
+        /* Defina a largura desejada */
+        /*  height: 200px;
+        Defina a altura desejada */
+        border: 1px solid #ccc;
+        padding: 20px;
+        /*overflow: auto;
+         Adicione uma barra de rolagem se necessário */
+        margin-bottom: 30px;
+        /* Adicione espaço entre os blocos */
+        box-sizing: border-box;
+        /* Garanta que a altura inclua o preenchimento e a borda */
+
+    }
+</style>
+
+
+<div class="">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="containerDiv">
+            <div class="key-block" id="private-key-block">
+                @{
+                    if (Model.PrivateKey != "")
+                    {
+                        @Html.Raw(Model.PrivateKey)
+                    }
+                    else
+                    {
+                        <p>Chave Privada</p>
+                    }
+                }
+            </div>
+            <div class="key-block" id="public-key-block">
+                @{
+                    if (Model.PrivateKey != "")
+                    {
+                        @Html.Raw(Model.PublicKey)
+                    }
+                    else
+                    {
+                        <p>Chave Pública</p>
+                    }
+                }
+            </div>
+            @{
+                if (Convert.ToBoolean(TempData["AlreadySubmit"]))
+                {
+                    <button asp-controller="Start" asp-action="FirstPage" class="btn btn-outline-primary">Voltar</button>
+                }
+                else
+                {
+                    <button action="submit" class="btn btn-outline-success">Gerar Par de Chaves</button>
+                }
+            }
+
+        </div>
+
+    </form>
+
+
+</div>
