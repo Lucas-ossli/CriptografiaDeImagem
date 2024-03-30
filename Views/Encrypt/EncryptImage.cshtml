@@ -1,0 +1,31 @@
+@model KeyPairModel
+@{
+    ViewData["Title"] = "Criptografar Imagem";
+}
+
+<div>
+
+    <form method="post" enctype="multipart/form-data">
+
+        <div>
+            <label>Chave Pública:</label>
+            <input type="text" asp-for="PublicKey">
+        </div>
+        <label for="imageInput">Selecione uma imagem:</label>
+        <input type="file" id="imageInput" name="imageInput" accept="image/*" asp-for="NormalImage" /><br /><br />
+
+        <div>
+            <button action="submit" class="btn btn-primary">Criptografar</button>
+        </div>
+    </form>
+
+    @if (Model.EncryptedData != null)
+    {
+        <h1>Download do Arquivo Criptografado</h1>
+        <p>Clique no link abaixo para baixar o arquivo criptografado:</p>
+        <a href="@Url.Action("DownloadEncryptedFile", "Encrypt")">Baixar Arquivo</a>
+
+
+    }
+   
+</div>

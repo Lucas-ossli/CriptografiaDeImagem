@@ -1,4 +1,5 @@
 @model KeyPairModel
+
 @{
     ViewData["Title"] = "Gerar Par de Chaves";
 }
@@ -12,19 +13,17 @@
     }
 
     .key-block {
-        width: 80%;
-        /* Defina a largura desejada */
-        /*  height: 200px;
-        Defina a altura desejada */
+        width: 650px;
         border: 1px solid #ccc;
-        padding: 20px;
-        /*overflow: auto;
-         Adicione uma barra de rolagem se necessário */
+        padding: 10px;
         margin-bottom: 30px;
-        /* Adicione espaço entre os blocos */
         box-sizing: border-box;
-        /* Garanta que a altura inclua o preenchimento e a borda */
-
+        font-family: Consolas, monospace;
+        white-space: pre;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        font-size: 17px;
+        line-height: 1.3;
     }
 </style>
 
@@ -32,6 +31,7 @@
 <div class="">
     <form method="POST" enctype="multipart/form-data">
         <div class="containerDiv">
+            <h3>Chave Privada</h3>
             <div class="key-block" id="private-key-block">
                 @{
                     if (Model.PrivateKey != "")
@@ -44,6 +44,10 @@
                     }
                 }
             </div>
+        </div>
+
+        <div class="containerDiv">
+            <h3>Chave Pública</h3>
             <div class="key-block" id="public-key-block">
                 @{
                     if (Model.PrivateKey != "")
@@ -57,7 +61,7 @@
                 }
             </div>
             @{
-                if (Convert.ToBoolean(TempData["AlreadySubmit"]))
+                if (Model.AlreadySubmit)
                 {
                     <button asp-controller="Start" asp-action="FirstPage" class="btn btn-outline-primary">Voltar</button>
                 }
