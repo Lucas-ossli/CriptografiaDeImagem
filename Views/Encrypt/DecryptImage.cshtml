@@ -1,0 +1,30 @@
+@model KeyPairModel
+@{
+    ViewData["Title"] = "Descriptografar Imagem";
+}
+
+<div>
+
+    <form method="post" enctype="multipart/form-data">
+
+        <div>
+            <label>Chave Privada:</label>
+            <input type="text" asp-for="PrivateKey">
+        </div>
+        <label for="imageInput">Selecione uma imagem:</label>
+        <input type="file" id="imageInput" name="imageInput" accept="image/*" asp-for="EncryptedData" /><br /><br />
+
+        <div>
+            <button action="submit" class="btn btn-primary">Descriptografar</button>
+            <button asp-controller="Start" asp-action="FirstPage" class="btn btn-outline-primary">Voltar</button>
+        </div>
+    </form>
+
+    @if (Model.NormalImage != null)
+    {
+        <h1>Download do Arquivo Descriptografado</h1>
+        <p>Clique no link abaixo para baixar o arquivo Descriptografado:</p>
+        <a href="@Url.Action("DownloadDecryptedFile", "Encrypt")">Baixar Arquivo</a>
+    }
+
+</div>

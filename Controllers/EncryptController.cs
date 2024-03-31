@@ -16,6 +16,7 @@ public class EncryptController : Controller
     //private readonly ILogger<HomeController> _logger;
 
     public static byte[]? EncryptData;
+    public static byte[]? DecryptData;
     public static bool AlreadySubmit;
     public EncryptController(ILogger<HomeController> logger)
     {
@@ -54,12 +55,13 @@ public class EncryptController : Controller
         return View(viewModel);
     }
 
+    #region Encrypt
+
     [HttpGet]
     public IActionResult EncryptImage()
     {
         return View(new KeyPairModel());
     }
-
 
     [HttpPost]
     public IActionResult EncryptImage(KeyPairModel viewModel)
@@ -74,35 +76,44 @@ public class EncryptController : Controller
                 viewModel.NormalImage = ms.ToArray();
             }
         }
-
-        using (RSA rsa = RSA.Create())
+        else
         {
-            int tamanhoBloco = (rsa.KeySize / 8) - 11;
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int offset = 0;
-
-                while (offset < viewModel.NormalImage.Length)
-                {
-                    int tamanhoAtual = Math.Min(tamanhoBloco, viewModel.NormalImage.Length - offset);
-                    byte[] bloco = new byte[tamanhoAtual];
-                    Array.Copy(viewModel.NormalImage, offset, bloco, 0, tamanhoAtual);
-                    byte[] blocoCriptografado = rsa.Encrypt(bloco, RSAEncryptionPadding.Pkcs1);
-                    ms.Write(blocoCriptografado, 0, blocoCriptografado.Length);
-                    offset += tamanhoAtual;
-                }
-
-                viewModel.EncryptedData = ms.ToArray();
-                EncryptData = viewModel.EncryptedData;
-            }
+            return View(new KeyPairModel());
         }
 
+        try
+        {
+            using (RSA rsa = RSA.Create())
+            {
+                rsa.ImportFromPem(viewModel.PublicKey.TrimEnd().TrimStart());
+                int tamanhoBloco = (rsa.KeySize / 8) - 11;
 
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    int offset = 0;
+
+                    while (offset < viewModel.NormalImage.Length)
+                    {
+                        int tamanhoAtual = Math.Min(tamanhoBloco, viewModel.NormalImage.Length - offset);
+                        byte[] bloco = new byte[tamanhoAtual];
+                        Array.Copy(viewModel.NormalImage, offset, bloco, 0, tamanhoAtual);
+                        byte[] blocoCriptografado = rsa.Encrypt(bloco, RSAEncryptionPadding.Pkcs1);
+                        ms.Write(blocoCriptografado, 0, blocoCriptografado.Length);
+                        offset += tamanhoAtual;
+                    }
+
+                    viewModel.EncryptedData = ms.ToArray();
+                    EncryptData = viewModel.EncryptedData;
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            return View(new KeyPairModel());
+        }
 
         return View(viewModel);
     }
-
 
     public ActionResult DownloadEncryptedFile()
     {
@@ -112,9 +123,18 @@ public class EncryptController : Controller
         return File(encryptedData, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
     }
 
+    #endregion
 
+    #region Decrypt 
 
-    public void HashCode()
+    [HttpGet]
+    public IActionResult DecryptImage()
+    {
+        return View(new KeyPairModel());
+    }
+
+    [HttpPost]
+    public IActionResult DecryptImage(KeyPairModel viewModel)
     {
         var imageInput = Request.Form.Files["imageInput"];
 
@@ -123,12 +143,57 @@ public class EncryptController : Controller
             using (var ms = new MemoryStream())
             {
                 imageInput.CopyTo(ms);
-                var imagem = ms.ToArray();
+                viewModel.EncryptedData = ms.ToArray();
             }
         }
+        else
+        {
+            return View(new KeyPairModel());
+        }
 
+
+        try
+        {
+            RSA rsa = RSA.Create();
+            rsa.ImportFromPem(viewModel.PrivateKey.TrimEnd().TrimStart());
+
+            int blockSize = rsa.KeySize / 8;
+
+            using (MemoryStream decryptedStream = new MemoryStream())
+            {
+                int offset = 0;
+                while (offset < viewModel.EncryptedData?.Length)
+                {
+                    int blockSizeRemaining = viewModel.EncryptedData.Length - offset;
+                    int blockSizeToProcess = Math.Min(blockSize, blockSizeRemaining);
+                    byte[] block = new byte[blockSizeToProcess];
+                    Array.Copy(viewModel.EncryptedData, offset, block, 0, blockSizeToProcess);
+
+                    byte[] decryptedBlock = rsa.Decrypt(block, RSAEncryptionPadding.Pkcs1);
+                    decryptedStream.Write(decryptedBlock, 0, decryptedBlock.Length);
+
+                    offset += blockSize;
+                }
+
+                viewModel.NormalImage = decryptedStream.ToArray();
+                DecryptData = viewModel.NormalImage;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            return View(new KeyPairModel());
+        }
+
+        return View(viewModel);
     }
 
+    public ActionResult DownloadDecryptedFile()
+    {
+        byte[] decryptData = DecryptData;
+        string fileName = "Decrypt_data.png";
 
+        return File(decryptData, "image/png", fileName);
+    }
 
+    #endregion  
 }

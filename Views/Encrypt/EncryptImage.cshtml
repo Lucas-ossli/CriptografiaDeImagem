@@ -14,9 +14,13 @@
         <label for="imageInput">Selecione uma imagem:</label>
         <input type="file" id="imageInput" name="imageInput" accept="image/*" asp-for="NormalImage" /><br /><br />
 
+
         <div>
             <button action="submit" class="btn btn-primary">Criptografar</button>
+            <button asp-controller="Start" asp-action="FirstPage" class="btn btn-outline-primary">Voltar</button>
         </div>
+
+
     </form>
 
     @if (Model.EncryptedData != null)
@@ -27,5 +31,5 @@
 
 
     }
-   
+
 </div>
