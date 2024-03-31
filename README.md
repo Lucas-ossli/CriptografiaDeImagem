@@ -1,2 +1,2 @@
 # CriptografiaDeImagem
-criptografia de imagem com criptografia assimétrica 
+Criptografar imagem com criptografia assimétrica RSA
